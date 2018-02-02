@@ -1,1 +1,3 @@
-token = "547474371:AAGdh1ekG0H2PZf__RxnFc1raaFz357TYfI"
+token = "547474371:AAE9OFiTkNcMLxg_rjUCzoE8YG9eYIzhD0w"
+#database_name = 'User.db'  # Файл с базой данных
+#shelve_name = 'shelve.db'  # Файл с хранилищем
