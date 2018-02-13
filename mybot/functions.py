@@ -73,21 +73,6 @@ def get_task(message):
         break
     c.close()
     
-    '''
-    conn = sqlite3.connect('base')
-    c = conn.cursor()
-    c.execute('select * from users order by id')
-
-    for row in c:
-        if row[0] == message.from_user.id:
-            row[1] = task_id
-            row[2] = 'YES'
-            break
-    c.commit()
-    c.close()
-    '''
-
-
 
 #Деньги (потом будут все атрибуты)
 def get_ballance(message):
