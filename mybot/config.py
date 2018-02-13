@@ -1,3 +1,3 @@
-token = "480532798:AAFa_P-bWD2ZYJjaytbHItm0FIRDViNC1os"
+token = "OUR_TOKEN"
 database_name = "base"
 tasks_base = "tasks_base"
