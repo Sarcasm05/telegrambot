@@ -9,18 +9,12 @@ bot = telebot.TeleBot(config.token)
 def status_task(message):       #Проверить статус выполнения задания пользователем
     bd = liter(config.database_name)
     c = bd.select_single(message.from_user.id)
-    if c[2] == 'NO':
+    if c[2] == 'EMPTY' :
         bd.close()
-        count = 'NO'
-        return count
-    elif c[2] == 'EMPTY' :
+        return 'EMPTY' 
+    elif c[2] == 'YES':
         bd.close()
-        count = 'EMPTY'
-        return count 
-    else:
-        bd.close()
-        count = 'YES'
-        return count
+        return 'YES'
 
 def show_my_task(message):       #Показать задание пользователя
     bd_user = liter(config.database_name) # открываем бд пользователей
