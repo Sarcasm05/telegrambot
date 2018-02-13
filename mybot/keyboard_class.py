@@ -42,10 +42,17 @@ class Keyboard:
         self.bot.send_message(message.from_user.id, 'Выберите пункт меню:',
                              reply_markup=date_markup)
 
+    def main_menu_task(self, message):
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup.row("Мое задание")
+        user_markup.row("Показать соц сети")
+        user_markup.row("Проверить балланс")
+        #user_markup.row('Обновления', 'Обратная связь')
+        self.bot.send_message(message.from_user.id, 'Выберите пункт меню:',
+                             reply_markup=user_markup)
     def main_menu(self, message):
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup.row("Начать работу")
-        user_markup.row("Мое задание")
         user_markup.row("Показать соц сети")
         user_markup.row("Проверить балланс")
         #user_markup.row('Обновления', 'Обратная связь')

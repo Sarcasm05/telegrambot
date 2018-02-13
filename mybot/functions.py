@@ -1,42 +1,73 @@
 import sqlite3
 import telebot
 import config
+from SQLite import liter
 from keyboard_class import Keyboard
 bot = telebot.TeleBot(config.token)
 
 
-def status_task(message):
-    conn = sqlite3.connect('base')
-    c = conn.cursor()
-    c.execute('select * from users order by id')
-    for row in c:
-        if row[0] == message.from_user.id:
-            status = row[2]
-            print(status)
-            if status == 'NO':
-                return 'NO'
-            elif status == 'EMPTY' :
-                return 'EMPTY'
-            else:
-                return 'YES'
-    c.close()
+def status_task(message):       #Проверить статус выполнения задания пользователем
+    bd = liter(config.database_name)
+    c = bd.select_single(message.from_user.id)
+    if c[2] == 'NO':
+        bd.close()
+        count = 'NO'
+        return count
+    elif c[2] == 'EMPTY' :
+        bd.close()
+        count = 'EMPTY'
+        return count 
+    else:
+        bd.close()
+        count = 'YES'
+        return count
+
+def show_my_task(message):       #Показать задание пользователя
+    bd_user = liter(config.database_name) # открываем бд пользователей
+    row = bd_user.select_single(message.from_user.id)
+    task_id = row[1] #id задания
+    bd_user.close()
+
+    bd_task = liter(config.tasks_base)# открываем бд заданий
+    row_task = bd_task.select_single_task(task_id) 
+    task = row_task[2] #Задание
+    bot.send_message(message.from_user.id, task)
+    bd_task.close()
+
+def accept_task(message,task_number):       #Принять задание 
+    bd_task = liter(config.tasks_base)# открываем бд заданий
+    row_task = bd_task.select_single_task(task_number) 
+    task = row_task[2] #Задание
+    task_id = row_task[0]
+    bot.send_message(message.from_user.id, "Вы приняли задание : ")
+    bot.send_message(message.from_user.id, task)
+    bd_task.close()
+
+    bd_user = liter(config.database_name)
+    bd_user.accept_status_task(message.from_user.id,task_id)
+    bd_user.close()
+
+def cancel_task(message):       #Отмена задания
+    bd_user = liter(config.database_name)
+    bd_user.cancel_status_task(message.from_user.id)
+    bot.send_message(message.from_user.id, "Вы  отменили задание.")
+    bd_user.close()
+
+def done_task(message):         #Задание выполнено
+    bd_user = liter(config.database_name)
+    row = bd_user.select_single(message.from_user.id)
+    task_id = row[1]
+    bd_task = liter(config.tasks_base)
+    row_task = bd_task.select_single_task(task_id)
+    task_cost = row_task[3]
+    bd_user.cancel_status_task(message.from_user.id)
+    bd_user.add_money(message.from_user.id, task_cost)
+    bot.send_message(message.from_user.id, "Вы  выполнили задание, заработав {0} монет".format(task_cost))
+    bd_user.close()
+    bd_task.close()
 
 
-def cancel_task(message):
-    conn = sqlite3.connect('base')
-    c = conn.cursor()
-    c.execute('select * from users order by id')
-    for row in c:
-        if row[0] == message.from_user.id:
-            row[2] = "EMPTY"
-            break
-    c.close()
-
-
-
-def get_task(message):
-    #bot.send_message(message.chat.id, "Выбери задание : ")
-    
+def get_task(message):    
     conn = sqlite3.connect('tasks_base')
     c = conn.cursor()
     c.execute('select * from tasks order by id')
